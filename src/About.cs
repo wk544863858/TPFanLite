@@ -84,7 +84,12 @@ namespace TPFanLite
             {
                 FileVersionInfo vi = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
                 string v = (vi.FileVersion ?? "").Trim();
-                if (v.Length > 0 && v != "0.0.0.0" && v != "0.0.0.0.0") return "v" + v;
+                if (v.Length > 0 && v != "0.0.0.0" && v != "0.0.0.0.0")
+                {
+                    string[] ps = v.Split('.');
+                    if (ps.Length > 3) v = ps[0] + "." + ps[1] + "." + ps[2];   // 0.3.0.0 → 0.3.0
+                    return "v" + v;
+                }
             }
             catch { }
             return "开发版";
