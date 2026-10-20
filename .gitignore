@@ -1,0 +1,31 @@
+# 构建产物
+*.exe
+*.pdb
+*.zip
+*.bak-*
+
+# 第三方二进制：TVicPort 属 EnTech Taiwan，本仓库不分发（见 assets/README.md）
+*.dll
+*.sys
+
+# 本机配置与运行日志
+TPFanLite.ini
+*.log
+diag-*.csv
+smart.log
+pl1pin.log
+driver-install.log
+bios-*.log
+
+# 调查数据：厂商 ACPI 表与历史证据（体积大、非本项目版权）
+data/
+archive/
+*.aml
+*.dsl
+
+# IDE / 系统
+.vs/
+.vscode/
+*.user
+Thumbs.db
+desktop.ini
