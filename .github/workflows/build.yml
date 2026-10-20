@@ -16,13 +16,16 @@ jobs:
         shell: powershell
         run: powershell -NoProfile -ExecutionPolicy Bypass -File .\build.ps1 -NoDriver
 
+      # 注意：run 脚本内容只用 ASCII。Runner 写出的临时 .ps1 无 BOM，
+      # Windows PowerShell 5.1 会按 ANSI 解析，中文字符会触发 ParserError。
       - name: 校验产物与版本
         shell: powershell
         run: |
-          if (-not (Test-Path .\TPFanLite.exe)) { throw "构建失败：TPFanLite.exe 不存在" }
+          if (-not (Test-Path .\TPFanLite.exe)) { throw "build failed: TPFanLite.exe not found" }
           $vi = (Get-Item .\TPFanLite.exe).VersionInfo
           "FileVersion = $($vi.FileVersion)"
           "Product     = $($vi.ProductName)"
+          if (-not ($vi.FileVersion -like '0.3.0*')) { throw "unexpected version: $($vi.FileVersion)" }
 
       - uses: actions/upload-artifact@v4
         with:

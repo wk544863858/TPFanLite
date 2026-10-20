@@ -17,6 +17,7 @@ jobs:
         shell: powershell
         run: powershell -NoProfile -ExecutionPolicy Bypass -File .\build.ps1 -NoDriver
 
+      # 注意：run 脚本内容只用 ASCII（Runner 临时 .ps1 无 BOM，PS 5.1 按 ANSI 解析）。
       - name: 打包
         shell: powershell
         run: |
