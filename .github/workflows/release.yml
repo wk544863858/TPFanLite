@@ -1,0 +1,40 @@
+name: release
+
+on:
+  push:
+    tags: [ 'v*' ]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 编译（不含内嵌驱动）
+        shell: powershell
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File .\build.ps1 -NoDriver
+
+      - name: 打包
+        shell: powershell
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $zip = "TPFanLite-$tag.zip"
+          Compress-Archive -Path .\TPFanLite.exe, .\README.md, .\LICENSE, .\CHANGELOG.md -DestinationPath $zip -Force
+          "ZIP=$zip" >> $env:GITHUB_ENV
+
+      - name: 创建 Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.ZIP }}
+          generate_release_notes: false
+          body: |
+            ## TPFanLite ${{ github.ref_name }}
+
+            详见 [CHANGELOG.md](./CHANGELOG.md)。
+
+            > 本发布包**不含** TVicPort 二进制（EnTech Taiwan 免费软件）。
+            > 使用前请按 README 的「前置条件」自行下载，并把 `TVicPort.dll` 放到程序目录、
+            > `TVicPort64.sys` 放到程序目录（驱动自安装会读取它）。

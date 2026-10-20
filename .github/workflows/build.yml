@@ -1,0 +1,31 @@
+name: build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 编译（不含内嵌驱动）
+        shell: powershell
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File .\build.ps1 -NoDriver
+
+      - name: 校验产物与版本
+        shell: powershell
+        run: |
+          if (-not (Test-Path .\TPFanLite.exe)) { throw "构建失败：TPFanLite.exe 不存在" }
+          $vi = (Get-Item .\TPFanLite.exe).VersionInfo
+          "FileVersion = $($vi.FileVersion)"
+          "Product     = $($vi.ProductName)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TPFanLite-nodriver
+          path: TPFanLite.exe
+          if-no-files-found: error
